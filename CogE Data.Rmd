@@ -1,0 +1,29 @@
+---
+title: "CogE Data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(ggplot2)
+```
+
+```{r}
+data <- read_excel("CogER.xlsx")
+View(data)
+```
+
+```{r}
+vis <- ggplot(data, aes(x = Group, y = Score))+
+  geom_boxplot()
+
+vis
+```
+
+```{r}
+one.way <- aov(Score ~ Group, data = data)
+
+summary(one.way)
+```
+
