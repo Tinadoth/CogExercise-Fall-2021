@@ -7,22 +7,45 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(readxl)
 library(ggplot2)
+library(dplyr)
+library(lattice)
 ```
 
 ```{r}
-data <- read_excel("CogER.xlsx")
+data <- read_excel("CogNOVRD.xlsx")
 View(data)
+
 ```
+```{r}
+
+data1 <- subset(data, Over_4800=="N")
+data1
+aggregate(data1$Score, list(data1$Group), FUN=mean)
+```
+
 
 ```{r}
 vis <- ggplot(data, aes(x = Group, y = Score))+
   geom_boxplot()
 
 vis
+
+vis1 <- ggplot(data1, labels = c("c","con","rub"), aes(x = Group, y = Score, colour = Group))+
+  geom_boxplot(aes(fill = Group))+
+  scale_color_manual(values = c("mediumturquoise", "whitesmoke", "paleturquoise"), labels = c("c","con","rub"))+
+  scale_fill_manual(values = c("blue", "deeppink", "purple"), labels = c("c","con","rub"))+
+  theme_dark()
+ 
+
+vis1
 ```
 
 ```{r}
 one.way <- aov(Score ~ Group, data = data)
+
+summary(one.way)
+
+one.way <- aov(Score ~ Group, data = data1)
 
 summary(one.way)
 ```
