@@ -9,6 +9,7 @@ library(readxl)
 library(ggplot2)
 library(dplyr)
 library(lattice)
+library(rstatix)
 ```
 
 ```{r}
@@ -20,7 +21,11 @@ View(data)
 
 data1 <- subset(data, Over_4800=="N")
 data1
-aggregate(data1$Score, list(data1$Group), FUN=mean)
+
+gm <- aggregate(data$Score, list(data$Group), FUN=mean)
+gm1 <- aggregate(data1$Score, list(data1$Group), FUN=mean)
+
+gm1
 ```
 
 
@@ -32,21 +37,27 @@ vis
 
 vis1 <- ggplot(data1, labels = c("c","con","rub"), aes(x = Group, y = Score, colour = Group))+
   geom_boxplot(aes(fill = Group))+
-  scale_color_manual(values = c("mediumturquoise", "whitesmoke", "paleturquoise"), labels = c("c","con","rub"))+
-  scale_fill_manual(values = c("blue", "deeppink", "purple"), labels = c("c","con","rub"))+
+  scale_color_manual(values = c("mediumturquoise", "whitesmoke", "paleturquoise"), labels = c("Cancelation","Control","Rebus"))+
+  scale_fill_manual(values = c("blue", "deeppink", "purple"), labels = c("Cancelation","Control","Rebus"))+
   theme_dark()
  
-
-vis1
+vis2 <- vis1 + labs(title = "Average Amount of Questions Answered Within Each Group")
+vis2
 ```
+
+```{r}
+anv1 <- anova_test(data = data1, dv = Score, wid = Participant, within = Group)
+get_anova_table(anv1)
+```
+
 
 ```{r}
 one.way <- aov(Score ~ Group, data = data)
 
 summary(one.way)
 
-one.way <- aov(Score ~ Group, data = data1)
+one.way1 <- aov(Score ~ Group, data = data1)
 
-summary(one.way)
+summary(one.way1)
 ```
 
