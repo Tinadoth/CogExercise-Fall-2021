@@ -1,0 +1,48 @@
+---
+title: "Experiment 2"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(psych)
+library(ggplot2)
+```
+
+```{r}
+library(readxl)
+datao <- read_excel("Data w_ Consent (1).xlsx")
+data1 <- select(datao,ScoreCE, ScoreNCE)
+data <- remove_missing(data1)
+data
+colnames(data) <- c("Training","Control")
+dlong <- data %>%
+  gather(key = "Group", value = "Score", Control, Training)
+dlong
+
+res <- t.test(Score ~ Group, data = dlong, paired = TRUE)
+res
+
+```
+
+
+
+```{r}
+vis <- ggplot(dlong, aes(x = Group, y = Score, colour = Group))+
+  geom_boxplot()
+
+vis
+
+vis1 <- ggplot(dlong,aes(x = Group, y = Score, colour = Group))+
+  geom_boxplot(aes(fill = Group))+
+  scale_color_manual(values = c("black", "black"))+
+  scale_fill_manual(values = c("deeppink", "purple"))+
+  theme_bw()
+ 
+vis2 <- vis1 + labs(title = "Average Amount of Questions Answered") +
+  theme(legend.position = "none", text = element_text(size = 20)
+      )
+vis2
+```
+

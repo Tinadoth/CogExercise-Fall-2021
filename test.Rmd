@@ -1,0 +1,46 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+rnorm2 <- function(n,mean,sd) { mean+sd*scale(rnorm(n)) }
+train <- rnorm2( 48,0.880,.082)
+mean(train)  ## 4
+sd(train)    ## 1
+
+control <- rnorm2(48,.824, 0.097)
+
+
+```
+
+
+```{r}
+train1 <- as.numeric(train)
+control1 <- as.numeric(control)
+df <- data.frame(train1,control1)
+df
+
+dlong <- df %>%
+  gather(key = "Group", value = "Score", train1, control1)
+dlong
+
+vis <- ggplot(dlong, aes(x = Group, y = Score, colour = Group))+
+  geom_boxplot()
+
+vis
+
+vis1 <- ggplot(dlong,aes(x = Group, y = Score, colour = Group))+
+  geom_boxplot(aes(fill = Group))+
+  scale_color_manual(values = c("whitesmoke", "paleturquoise"), labels = c("Training","Control"))+
+  scale_fill_manual(values = c("deeppink", "purple"), labels = c("Training","Control"))+
+  theme_dark(text = element_text(size = 20))
+ 
+vis2 <- vis1 + labs(title = "Average Amount of Questions Answered Within Each Group")
+vis2
+```
+

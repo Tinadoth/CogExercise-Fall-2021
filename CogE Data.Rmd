@@ -10,30 +10,33 @@ library(ggplot2)
 library(dplyr)
 library(lattice)
 library(rstatix)
+library(ez)
+library(DescTools)
 ```
 
 ```{r}
-data <- read_excel("CogNOVRD.xlsx")
+data <- read_excel("COGDEC.xlsx")
 View(data)
 
 ```
 ```{r}
 
-data1 <- subset(data, Over_4800=="N")
+data1 <- subset(data, data$`Over 4800`=="N")
 data1
+data1$Group <- as.factor(data1$Group)
 
-gm <- aggregate(data$Score, list(data$Group), FUN=mean)
+
 gm1 <- aggregate(data1$Score, list(data1$Group), FUN=mean)
+gm2 <- aggregate(data1$Score, list(data1$Group), FUN=sd)
 
 gm1
+gm2
 ```
 
 
 ```{r}
 vis <- ggplot(data, aes(x = Group, y = Score))+
   geom_boxplot()
-
-vis
 
 vis1 <- ggplot(data1, labels = c("c","con","rub"), aes(x = Group, y = Score, colour = Group))+
   geom_boxplot(aes(fill = Group))+
@@ -47,17 +50,17 @@ vis2
 
 ```{r}
 anv1 <- anova_test(data = data1, dv = Score, wid = Participant, within = Group)
+anv1
 get_anova_table(anv1)
+
+
+
 ```
 
 
 ```{r}
-one.way <- aov(Score ~ Group, data = data)
+summary(cc<-aov(Score~as.factor(Group),data= data1))
+TukeyHSD(cc,"as.factor(Group)",data=data1)
 
-summary(one.way)
-
-one.way1 <- aov(Score ~ Group, data = data1)
-
-summary(one.way1)
 ```
 
